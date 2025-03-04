@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Page</title>
+</head>
+<body>
+<h1>Добро пожаловать, администратор!</h1>
+
+<p>Ваши роли: <span th:text="${user.roles}"></span></p>
+
+<!--<h2>Управление пользователями</h2>-->
+<!--&lt;!&ndash; Пример ссылки на управление пользователями &ndash;&gt;-->
+<!--<a href="/admin/users">Просмотр всех пользователей</a>-->
+
+<br/>
+<a href="/logout">Выйти</a>
+</body>
+</html>

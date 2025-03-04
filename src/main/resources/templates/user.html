@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>User Page</title>
+</head>
+<body>
+<h1>Добро пожаловать, пользователь!</h1>
+
+<p>Ваши роли: <span th:text="${user.roles}"></span></p>
+
+<!--<h2>Доступные функции</h2>-->
+<!--<ul>-->
+<!--  <li><a href="/user/profile">Ваш профиль</a></li>-->
+<!--  <li><a href="/user/settings">Настройки</a></li>-->
+<!--</ul>-->
+
+<br/>
+<a href="/logout">Выйти</a>
+</body>
+</html>
