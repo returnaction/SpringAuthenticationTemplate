@@ -3,6 +3,7 @@ package springsecurity1.demo.models;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -19,9 +20,14 @@ public class Role implements GrantedAuthority {
     // для связей многие ко многим.
     @Transient
     @ManyToMany(mappedBy = "roles")
-    private Set<MyUser> myUsers;
+    private Set<User> users;
 
     public Role() {
+    }
+
+    public Role(Set<User> users, String name) {
+        this.users = users;
+        this.name = name;
     }
 
     public Long getId() {
@@ -40,12 +46,12 @@ public class Role implements GrantedAuthority {
         this.name = name;
     }
 
-    public Set<MyUser> getUsers() {
-        return myUsers;
+    public Set<User> getUsers() {
+        return users;
     }
 
-    public void setUsers(Set<MyUser> myUsers) {
-        this.myUsers = myUsers;
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
     @Override
@@ -53,5 +59,20 @@ public class Role implements GrantedAuthority {
         return getName();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Role role = (Role) o;
+        return Objects.equals(id, role.id) && Objects.equals(name, role.name);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

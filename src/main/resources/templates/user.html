@@ -7,13 +7,16 @@
 <body>
 <h1>Добро пожаловать, пользователь!</h1>
 
-<p>Ваши роли: <span th:text="${user.roles}"></span></p>
+<p>Ваши роли:</p>
+<ul>
+  <li th:each="role : ${user.getRoles()}" th:text="${name}"></li>
+</ul>
 
-<!--<h2>Доступные функции</h2>-->
-<!--<ul>-->
-<!--  <li><a href="/user/profile">Ваш профиль</a></li>-->
-<!--  <li><a href="/user/settings">Настройки</a></li>-->
-<!--</ul>-->
+<h2>Доступные функции</h2>
+<ul>
+  <li><a href="/user/profile">Ваш профиль</a></li>
+  <li><a href="/user/settings">Настройки</a></li>
+</ul>
 
 <br/>
 <a href="/logout">Выйти</a>

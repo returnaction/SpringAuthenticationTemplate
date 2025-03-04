@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Set;
 
 @Entity
-public class MyUser implements UserDetails {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,15 +20,6 @@ public class MyUser implements UserDetails {
     @Transient
     private String passwordConfirm;
 
-    @Column(nullable = true)
-    private String firstName;
-    @Column(nullable = true)
-    private String lastName;
-
-    @Column(nullable = true)
-    private int age;
-
-
     // для связей многие ко многим
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -38,7 +29,19 @@ public class MyUser implements UserDetails {
     )
     private Set<Role> roles;
 
-    public MyUser() {
+    public User() {
+    }
+
+    public User(String username, String password, String passwordConfirm, Set<Role> roles) {
+        this.username = username;
+        this.password = password;
+        this.passwordConfirm = passwordConfirm;
+        this.roles = roles;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoles();
     }
 
     public Long getId() {
@@ -49,6 +52,7 @@ public class MyUser implements UserDetails {
         this.id = id;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -58,10 +62,6 @@ public class MyUser implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
-    }
-
     public String getPassword() {
         return password;
     }
@@ -76,30 +76,6 @@ public class MyUser implements UserDetails {
 
     public void setPasswordConfirm(String passwordConfirm) {
         this.passwordConfirm = passwordConfirm;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
     }
 
     public Set<Role> getRoles() {

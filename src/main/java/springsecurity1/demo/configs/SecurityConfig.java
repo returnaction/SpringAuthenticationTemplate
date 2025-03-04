@@ -8,61 +8,41 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import springsecurity1.demo.repositories.RoleRepository;
-import springsecurity1.demo.services.UserService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final UserService userService;
-    private final RoleRepository rolerepository;
+    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
-    public SecurityConfig(UserService userService, RoleRepository rolerepository) {
-        this.userService = userService;
-        this.rolerepository = rolerepository;
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return userService;
-    }
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    @Autowired
+    public SecurityConfig(CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
+        this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/", "/home", "/register/**").permitAll();
-                    registry.requestMatchers("/admin/**").hasRole("ADMIN");
-                    registry.requestMatchers("/user/**").hasAnyRole("USER", "ADMIN");
-                    registry.anyRequest().authenticated();
-                })
+                .authorizeHttpRequests(registry -> registry
+                    .requestMatchers("/", "/home", "/register/**", "/login", "/error").permitAll()
+                    .requestMatchers("/admin/**", "/admin/home").hasRole("ADMIN")
+                    .requestMatchers("/user/**", "/user/home").hasAnyRole("USER", "ADMIN")
+                    .anyRequest().authenticated()
+                )
                 .formLogin(formLogin ->
                         formLogin.loginPage("/login")
-                                .successHandler(new CustomAuthenticationSuccessHandler())
+                                .successHandler(customAuthenticationSuccessHandler)
                                 .permitAll()
                 )
                 .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login"))
                 .build();
     }
 
-    //Если добавить это то происходит stackoverflow
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-//        return authenticationConfiguration.getAuthenticationManager();
-//    }
-
-
-
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
 }
